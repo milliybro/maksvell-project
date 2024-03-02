@@ -346,7 +346,7 @@ const Maksvell = () => {
             <Chart
               options={data.options}
               series={data.series}
-              type="area"
+              type="line"
               height={350}
             />
           </div>
