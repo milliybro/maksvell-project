@@ -127,7 +127,8 @@ const Maksvell = () => {
 
   let normalizationConstant = massa / (2 * Math.PI * k * temperature) ** 1.5;
 
-  let exponentialTerm = Math.exp(
+  let exponentialTerm = Math.pow(
+    2.71,
     -(massa * Math.pow(speed, 2)) / (2 * Math.PI * k * temperature)
   );
 
@@ -181,6 +182,7 @@ const Maksvell = () => {
   // mean speed
   useEffect(() => {
     setChartBols((prevBols) => [...prevBols, roundedNumber]);
+    
   }, [roundedNumber]);
 
   const formItemLayout = {
@@ -198,6 +200,12 @@ const Maksvell = () => {
     setMassa(e.target.value);
   };
   const newChartBols = chartBols.filter((value) => value !== undefined);
+  const seriesArray = [];
+
+  seriesArray.push({
+    name: '',
+    data: [],
+  });
 
   const data = {
     series: [
@@ -210,7 +218,7 @@ const Maksvell = () => {
     options: {
       chart: {
         height: 350,
-        type: "line",
+        type: "area",
         zoom: {
           enabled: false,
         },
@@ -219,7 +227,7 @@ const Maksvell = () => {
         enabled: true,
       },
       stroke: {
-        curve: "straight",
+        curve: "smooth",
       },
       title: {
         text: "Maksvel taqsimoti grafigi ",
@@ -346,7 +354,7 @@ const Maksvell = () => {
             <Chart
               options={data.options}
               series={data.series}
-              type="line"
+              type="area"
               height={350}
             />
           </div>
