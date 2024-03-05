@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import "./style.scss";
 import Chart from "react-apexcharts";
 import { Button, Form, InputNumber, Radio, Space } from "antd";
+
 const Maksvell = () => {
   const canvasRef = useRef(null);
   const [speed, setSpeed] = useState(0);
@@ -10,6 +11,7 @@ const Maksvell = () => {
   const [massa, setMassa] = useState(0);
   const [chartBols, setChartBols] = useState([]);
   const [chartTemperature, setChartTemperature] = useState([]);
+  const [seriesIndex, setSeriesIndex] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,8 +183,14 @@ const Maksvell = () => {
   // Probably speed
   // mean speed
   useEffect(() => {
-    setChartBols((prevBols) => [...prevBols, roundedNumber]);
-    
+    setChartBols((prevBols) => {
+      if (prevBols.length > 10) {
+        // If length is greater than 10, create a new series
+        setSeriesIndex((prevIndex) => prevIndex + 1);
+        return [...prevBols, roundedNumber];
+      }
+      return [...prevBols, roundedNumber];
+    });
   }, [roundedNumber]);
 
   const formItemLayout = {
@@ -196,25 +204,20 @@ const Maksvell = () => {
 
   console.log(temperature, "on");
 
-  const radioValue = (e) => {
-    setMassa(e.target.value);
-  };
-  const newChartBols = chartBols.filter((value) => value !== undefined);
+  // const newChartBols = chartBols.filter((value) => value !== undefined);
+
   const seriesArray = [];
 
-  seriesArray.push({
-    name: '',
-    data: [],
-  });
+  for (let i = 0; i <= seriesIndex; i++) {
+
+    seriesArray.push({
+      // name: `series-${i + 1}`,
+      data: chartBols.slice(i * 10, (i + 1) * 10),
+    });
+  }
 
   const data = {
-    series: [
-      {
-        name: "",
-        // data: newChartBols,
-        data: newChartBols,
-      },
-    ],
+    series: seriesArray,
     options: {
       chart: {
         height: 350,
@@ -224,7 +227,7 @@ const Maksvell = () => {
         },
       },
       dataLabels: {
-        enabled: true,
+        enabled: false,
       },
       stroke: {
         curve: "smooth",
